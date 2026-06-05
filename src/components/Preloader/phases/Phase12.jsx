@@ -8,8 +8,8 @@ export default function Phase1({ nextPhase }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        const ASCII_CHARS = "....N..V..V!!!,,,:::=+xX#0369@@";
-        const FONT_SIZE = 12;
+        const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
+        const FONT_SIZE = 10;
 
         
         const ASPECT_WIDTH = 2;
@@ -196,7 +196,7 @@ export default function Phase1({ nextPhase }) {
             });
 
             tl.to(state, {
-                bangOpacity: 1,
+                bangOpacity: .25,
                 sixOpacity: 1,
                 comOpacity: .5,
                 delay:.5,
@@ -205,21 +205,24 @@ export default function Phase1({ nextPhase }) {
                 ease: "none"
             })
             .to(state, {
-                vOpacity: .5,
+                bangOpacity: .4,
+                vOpacity: .25,
                 comOpacity: .8,
                 dot2Opacity: 1,
                 duration: 2,
                 ease: "none",
             })
             .to(state, {
-                nOpacity: .2,
-                comOpacity: .8,
+                bangOpacity: .7,
+                vOpacity: .4,
+                nOpacity: .15,
+                comOpacity: 1,
                 duration: 2,
                 ease: "none"
             })
             .to(state, {
                 reveal: 0,
-                duration: .55,
+                duration: .42,
                 delay: 1,
                 ease: "none",
                 onComplete: startRotation(100 , 16)
