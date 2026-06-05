@@ -1,9 +1,10 @@
 import "./home.css";
-import Preloader from "@/components/Preloader/Preloader6";
+
+import PreloaderLayout from "@/components/Preloader/PreloaderLayout";
 
 export default function Home() {
     return (<>
-        <Preloader/>
+        <PreloaderLayout/>
         <div className="home">
         </div>
     </>);

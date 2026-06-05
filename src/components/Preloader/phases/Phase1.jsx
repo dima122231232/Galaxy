@@ -1,25 +1,33 @@
 "use client";
 
-import "./Preloader.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef} from "react";
 import { gsap } from "gsap";
 
-export default function Preloader() {
+export default function Phase1({ nextPhase }) {
     const imgRef = useRef(null);
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        const ASCII_CHARS = "..........,,,:::=+xX#0369@@";
+        const ASCII_CHARS = "....N..V..V!!!,,,:::=+xX#0369@@";
         const FONT_SIZE = 12;
 
-        const ASPECT_WIDTH = 1.8;
+        
+        const ASPECT_WIDTH = 2;
         const ASPECT_HEIGHT = 1;
 
-        const REVEAL_DURATION = 7.5;
+
+        const REVEAL_DURATION = 2.2;
 
         let state = {
             angle: 0,
             reveal: 0,
+
+            bangOpacity: 0,
+            vOpacity: 0,
+            nOpacity: 0,
+            comOpacity: .1,
+            dot2Opacity:.5,
+            sixOpacity:.8
         };
 
         const img = imgRef.current;
@@ -32,21 +40,27 @@ export default function Preloader() {
         const charWidth = Math.ceil(measureCtx.measureText("M").width);
         const charHeight = FONT_SIZE;
 
-        // 👉 фиксируем ширину = максимум экрана
         const ASCII_COLUMNS = Math.floor(window.innerWidth / charWidth);
-
-        // 👉 высота строго под 4/5
         const ASCII_ROWS = Math.floor(
             ASCII_COLUMNS * (ASPECT_HEIGHT / ASPECT_WIDTH)
         );
 
         const offscreen = document.createElement("canvas");
-        const offCtx = offscreen.getContext("2d");
+        const offCtx = offscreen.getContext("2d", {
+            willReadFrequently: true,
+        });
+
+        const ctx = canvas.getContext("2d");
 
         function getAlpha(char) {
-            if (char === ",") return 0.1;
-            if (char === ":") return 0.5;
-            if (char === "6") return 0.8;
+            if (char === "!") return state.bangOpacity;
+            if (char === "V") return state.vOpacity;
+            if (char === "N") return state.nOpacity;
+
+            if (char === ",") return state.comOpacity;
+            if (char === ":") return state.dot2Opacity;
+            if (char === "6") return state.sixOpacity;
+
             return 1;
         }
 
@@ -86,14 +100,11 @@ export default function Preloader() {
 
                     const char = ASCII_CHARS[charIndex];
 
-                    const base = charIndex / ASCII_CHARS.length;
-                    const appear = state.reveal * (base + Math.random() * 0.3);
+                    const threshold = 1 - (charIndex / ASCII_CHARS.length);
 
-                    if (appear > 0.25) {
-                        row.push(char === "." ? null : char);
-                    } else {
-                        row.push(null);
-                    }
+                    const visible = state.reveal > threshold;
+
+                    row.push(visible ? (char === "." ? null : char) : null);
                 }
 
                 asciiGrid.push(row);
@@ -108,16 +119,12 @@ export default function Preloader() {
             canvas.width = ASCII_COLUMNS * charWidth * dpr;
             canvas.height = ASCII_ROWS * charHeight * dpr;
 
-            const ctx = canvas.getContext("2d");
-
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             ctx.font = `${FONT_SIZE}px monospace`;
             ctx.textBaseline = "top";
         }
 
         function drawASCII(asciiGrid) {
-            const ctx = canvas.getContext("2d");
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const width = asciiGrid[0].length * charWidth;
@@ -127,13 +134,9 @@ export default function Preloader() {
             const cy = height / 2;
 
             ctx.save();
-
             ctx.translate(cx, cy);
             ctx.rotate((state.angle * Math.PI) / 180);
             ctx.translate(-cx, -cy);
-
-            ctx.font = `${FONT_SIZE}px monospace`;
-            ctx.textBaseline = "top";
 
             for (let y = 0; y < asciiGrid.length; y++) {
                 for (let x = 0; x < asciiGrid[y].length; x++) {
@@ -161,30 +164,82 @@ export default function Preloader() {
 
         loop();
 
+        state.reveal = 0;
+
         gsap.to(state, {
             reveal: 1,
             duration: REVEAL_DURATION,
-            ease: "power2.out",
-            onComplete: startRotation,
+            ease: "power1.out",
+            onComplete: startRotation(8 , 12),
         });
 
-        function startRotation() {
+        function startRotation(speed , time) {
             gsap.to(state, {
-                angle: 5,
-                duration: 12,
+                angle:speed,
+                duration: time,
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut",
             });
         }
+        function showNV() {
+            const tl = gsap.timeline({
+                onComplete:nextPhase
+            });
+
+            tl.to(state, {
+                bangOpacity: 1,
+                sixOpacity: 1,
+                comOpacity: .5,
+                delay:.5,
+                dot2Opacity: .8,
+                duration: 2,
+                ease: "none"
+            })
+            .to(state, {
+                vOpacity: .5,
+                comOpacity: .8,
+                dot2Opacity: 1,
+                duration: 2,
+                ease: "none",
+            })
+            .to(state, {
+                nOpacity: .2,
+                comOpacity: 1,
+                duration: 2,
+                ease: "none"
+            })
+            .to(state, {
+                reveal: 0,
+                duration: .55,
+                delay: 1,
+                ease: "none",
+                onComplete: startRotation(100 , 16)
+            });
+        }
+                
+        const onClick = () => {
+            // state.bangOpacity = 0;
+            // state.vOpacity = 0;
+            // state.nOpacity = 0;
+            startRotation(15 , 16);
+            showNV();   
+        };
+
+        window.addEventListener("click", onClick);
 
         if (img.complete && img.naturalWidth) {
             render();
         } else {
             img.addEventListener("load", render);
         }
+        return () => {
+            window.removeEventListener("click", onClick);
+            // img.removeEventListener("load", render);
+        };
     }, []);
 
+    
     return (
         <div className="preloader__content">
             <div className="preloader__container-img">
