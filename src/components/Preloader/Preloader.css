@@ -1,0 +1,27 @@
+.preloader__content{
+    position: relative;
+    height: 100svh;
+    width:100%;
+}
+.preloader_container-img{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    align-self: center;
+    overflow: hidden;
+}
+.galaxy{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+.preloader__container-img canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.galaxy-bg{position: absolute;top:0;width: 100%;height: 100%;mix-blend-mode: lighten;opacity: .3;filter: blur(25);object-fit: cover;}
