@@ -234,7 +234,7 @@ export default function Phase1({ nextPhase }) {
                 ease: "none",
                 onComplete:startRotation(100, 16)
             })
-            .to([".preloader__content", document.body], {
+            .to([".preloader__content", document.body , ".progress"], {
                 backgroundColor: "#000",
                 duration: 0.32,
                 ease: "none",

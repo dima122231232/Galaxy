@@ -1,7 +1,7 @@
 .preloader__content{
     position: relative;
     position: fixed;
-    z-index: 9999;
+    z-index: 999;
     background-color: var(--color-ink);
     inset: 0;
     height: 100svh;
@@ -41,7 +41,7 @@
     position: fixed;
     width: 100%;
     height: 100svh;
-    z-index: 9998;
+    z-index: 998;
     background-color: var(--color-black);
     perspective: 1000px;
     overflow: hidden;
@@ -105,7 +105,7 @@
     height: 100svh;
     position: fixed;
     inset: 0;
-    z-index: 9997;
+    z-index: 997;
     background-color: var(--color-paper);
 }
 
@@ -130,3 +130,10 @@
   display: block;
   visibility: hidden;
 }
+
+.progress{background-color: var(--color-ink);padding:1.5rem;z-index: 1000; position: fixed;left:50%;transform: translateX(-50%);bottom: 4rem;pointer-events: none;}
+.progress__label{font-family: var(--type-1);color: var(--color-paper);font-weight: 700;font-style: italic;opacity: .85;mix-blend-mode: difference;}
+.label-reboot{font-family: var(--type-2);font-weight: 400;font-style:normal;font-size:1rem;}
+.progress__bar{width: 100%;margin-top:15px;position: relative;}
+.progress__fill{position: absolute;width: 100%;height: 2px;background-color: var(--color-paper);opacity: .2;mix-blend-mode: difference;}
+.progress__track{position: absolute;width: 100%;height: 2px;background-color: var(--color-loading);transform: scaleX(0);transform-origin: 0% 0%;will-change: trasform;}

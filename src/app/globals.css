@@ -1,7 +1,13 @@
+@import url(./fonts.css);
+
 :root {
+    --type-1: "TWKLausanne", sans-serif;
+    --type-2: "PPEditorialNew", sans-serif;
+
     --color-black: #000;
     --color-ink: #111;
     --color-paper: #f4f4f2;
+    --color-loading: #305EFF;
 }
 
 *{margin: 0;padding: 0;box-sizing: border-box;}
