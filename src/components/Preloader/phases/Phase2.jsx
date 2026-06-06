@@ -10,7 +10,7 @@ useEffect(() => {
     if (!container) return;
 
     const TOTAL_IMAGES = 12;
-    const GAP = 1000;
+    const GAP = 1200;
 
     const groups = Math.ceil(TOTAL_IMAGES / 4);
     const layersCount = Math.max(groups, 6);
