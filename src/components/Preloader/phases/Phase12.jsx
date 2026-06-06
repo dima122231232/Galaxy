@@ -40,7 +40,7 @@ export default function Phase1({ nextPhase }) {
         const charWidth = Math.ceil(measureCtx.measureText("M").width);
         const charHeight = FONT_SIZE;
 
-        let ASCII_COLUMNS = 300;
+        let ASCII_COLUMNS = 100;
         // const ASCII_COLUMNS = Math.floor(window.innerWidth / charWidth);
 
         const ASCII_ROWS = Math.floor(
