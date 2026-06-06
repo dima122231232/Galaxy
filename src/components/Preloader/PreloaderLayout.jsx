@@ -15,15 +15,15 @@ export default function PreloaderLayout() {
     return (
         <div className="preloader">
 
-            {/* {phase === 0 && (
-                <Phase1 nextPhase={nextPhase} />
+            {phase === 0 && (
+                <Phase12 nextPhase={nextPhase} />
             )}
 
             {phase === 1 && (
                 <Phase2 nextPhase={nextPhase} />
-            )} */}
+            )}
 
-<Phase12 nextPhase={nextPhase} />
+{/* <Phase2 nextPhase={nextPhase} /> */}
         </div>
     );
 }
