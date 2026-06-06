@@ -141,7 +141,12 @@ useEffect(() => {
     };
 
     gsap.ticker.add(update);
-
+    gsap.to(document.body,{
+        backgroundColor: "rgb(245,245,240)",
+        duration: 1.5,
+        delay:9,
+        ease: "none",
+    });
     return () => {
         destroyed = true;
 

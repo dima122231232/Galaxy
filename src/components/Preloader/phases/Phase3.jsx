@@ -183,13 +183,6 @@ export default function PreloaderFaza2() {
             fall = true;
         }, 2500);
 
-        gsap.to(document.body,{
-            backgroundColor: "rgb(245,245,240)",
-            duration: 2,
-            ease: "power2.out",
-        });
-
-
         return () => {
             clearInterval(revealInterval);
             clearInterval(interval);
