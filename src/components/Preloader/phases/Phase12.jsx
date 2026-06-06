@@ -9,7 +9,7 @@ export default function Phase1({ nextPhase }) {
 
     useEffect(() => {
         const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
-        const FONT_SIZE = 10;
+        const FONT_SIZE = 12;
 
         
         const ASPECT_WIDTH = 2;
@@ -46,12 +46,13 @@ export default function Phase1({ nextPhase }) {
         const ASCII_ROWS = Math.floor(
             ASCII_COLUMNS * (ASPECT_HEIGHT / ASPECT_WIDTH)
         );
-        const updateColumns = () => {
-            ASCII_COLUMNS = window.innerWidth < 1000 ? 160 : 220;
-        };
-        updateColumns();
 
-        window.addEventListener("resize", updateColumns);
+        // const updateColumns = () => {
+        //     ASCII_COLUMNS = window.innerWidth < 1000 ? 220 : 220;
+        // };
+        // updateColumns();
+
+        // window.addEventListener("resize", updateColumns);
 
         const offscreen = document.createElement("canvas");
         const offCtx = offscreen.getContext("2d", {
@@ -222,11 +223,16 @@ export default function Phase1({ nextPhase }) {
             })
             .to(state, {
                 reveal: 0,
-                duration: .42,
+                duration: .32,
                 delay: 1,
                 ease: "none",
                 onComplete: startRotation(100 , 16)
-            });
+            })
+            .to(document.body, {
+                backgroundColor: "#000",
+                duration: 0.32,
+                ease: "none",
+            }, "<");
         }
                 
         const onClick = () => {
