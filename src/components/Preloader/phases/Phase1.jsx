@@ -233,7 +233,7 @@ export default function Phase1({ nextPhase }) {
                 ease: "none",
                 onComplete:startRotation(100, 16)
             })
-            .to(document.body, {
+            .to([".preloader__content", document.body], {
                 backgroundColor: "#000",
                 duration: 0.32,
                 ease: "none",
@@ -271,7 +271,7 @@ export default function Phase1({ nextPhase }) {
     }, [nextPhase]);
 
     return (
-        <div className="preloader__content">
+        <section className="preloader__content">
             <div className="preloader__container-img">
                 <img
                     ref={imgRef}
@@ -281,6 +281,6 @@ export default function Phase1({ nextPhase }) {
                 />
                 <canvas ref={canvasRef} />
             </div>
-        </div>
+        </section>
     );
 }

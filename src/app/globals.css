@@ -1,2 +1,8 @@
+:root {
+    --color-black: #000;
+    --color-ink: #111;
+    --color-paper: #f4f4f2;
+}
+
 *{margin: 0;padding: 0;box-sizing: border-box;}
-body,html{background-color: #111;}
+body,html{background-color: #111;overflow: hidden;}

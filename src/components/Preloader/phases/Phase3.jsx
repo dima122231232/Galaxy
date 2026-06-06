@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
 
-export default function PreloaderFaza2() {
+export default function PreloaderPhase3({ onComplete }) {
     const canvasRef = useRef(null);
     const imgRef = useRef(null);
 
@@ -13,18 +12,28 @@ export default function PreloaderFaza2() {
         const ASCII_CHARS = "@AVISUALANIMAL";
 
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d", { alpha: true });
-        const dpr = window.devicePixelRatio || 1;
+        const ctx = canvas?.getContext("2d", { alpha: true });
         const img = imgRef.current;
 
-        let cols, rows;
+        if (!canvas || !ctx || !img) return;
+
+        const dpr = window.devicePixelRatio || 1;
+
+        let cols = 0;
+        let rows = 0;
         let grid = [];
         let symbolIndex = 0;
-
         let fall = false;
-
         let revealRow = 0;
         let revealDone = false;
+        let destroyed = false;
+        let completed = false;
+        let rafId = 0;
+        let revealInterval = 0;
+        let symbolInterval = 0;
+        let fallTimer = 0;
+        let maxLifetimeTimer = 0;
+        let resizeHandler = null;
 
         function setupCanvas() {
             CELL_SIZE = window.innerWidth < 768 ? 3 : 15;
@@ -34,8 +43,8 @@ export default function PreloaderFaza2() {
 
             canvas.width = window.innerWidth * dpr;
             canvas.height = window.innerHeight * dpr;
-
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
 
         function sampleLogoIntoGrid() {
@@ -48,10 +57,13 @@ export default function PreloaderFaza2() {
             const startRow = Math.floor(rect.top / CELL_SIZE);
 
             const sampleCanvas = document.createElement("canvas");
-            sampleCanvas.width = logoCols;
-            sampleCanvas.height = logoRows;
+            sampleCanvas.width = Math.max(1, logoCols);
+            sampleCanvas.height = Math.max(1, logoRows);
 
             const sampleCtx = sampleCanvas.getContext("2d");
+            if (!sampleCtx) return;
+
+            sampleCtx.clearRect(0, 0, sampleCanvas.width, sampleCanvas.height);
             sampleCtx.drawImage(img, 0, 0, logoCols, logoRows);
 
             const { data } = sampleCtx.getImageData(0, 0, logoCols, logoRows);
@@ -60,7 +72,6 @@ export default function PreloaderFaza2() {
 
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
-
                     const inLogo =
                         col >= startCol &&
                         col < startCol + logoCols &&
@@ -71,9 +82,7 @@ export default function PreloaderFaza2() {
 
                     if (inLogo) {
                         const idx =
-                            ((row - startRow) * logoCols +
-                                (col - startCol)) * 4;
-
+                            ((row - startRow) * logoCols + (col - startCol)) * 4;
                         isLit = data[idx + 3] > 10;
                     }
 
@@ -83,7 +92,7 @@ export default function PreloaderFaza2() {
                             row,
                             y: row * CELL_SIZE,
                             vy: 0,
-                            char: ASCII_CHARS[0]
+                            char: ASCII_CHARS[0],
                         });
                     }
                 }
@@ -116,6 +125,33 @@ export default function PreloaderFaza2() {
             }
         }
 
+        function maybeComplete() {
+            if (completed || destroyed || !fall || !revealDone) return;
+            if (!grid.length) return;
+
+            const ground = (rows + 1) * CELL_SIZE;
+
+            let settledCells = 0;
+            let totalCells = 0;
+
+            for (const stack of grid) {
+                for (const cell of stack) {
+                    totalCells += 1;
+                    const atGround = cell.y >= ground - 0.5;
+                    const stopped = Math.abs(cell.vy) < 0.08;
+                    if (atGround && stopped) settledCells += 1;
+                }
+            }
+
+            if (totalCells > 0 && settledCells === totalCells) {
+                completed = true;
+
+                window.setTimeout(() => {
+                    if (!destroyed) onComplete?.();
+                }, 250);
+            }
+        }
+
         function render() {
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -130,66 +166,87 @@ export default function PreloaderFaza2() {
                 const stack = grid[col];
 
                 for (const c of stack) {
-
                     if (!fall && !revealDone && c.row > revealRow) continue;
 
                     if (!fall) {
                         c.char = char;
                     }
 
-                    const x = c.col * CELL_SIZE;
-                    const y = c.y;
-
-                    ctx.fillText(
-                        c.char,
-                        x + CELL_SIZE / 2,
-                        y
-                    );
+                    ctx.fillText(c.char, c.col * CELL_SIZE + CELL_SIZE / 2, c.y);
                 }
             }
         }
 
         function loop() {
+            if (destroyed) return;
+
             updatePhysics();
             render();
-            requestAnimationFrame(loop);
+            maybeComplete();
+
+            rafId = window.requestAnimationFrame(loop);
         }
 
         function init() {
             setupCanvas();
             sampleLogoIntoGrid();
-            loop();
         }
 
-        window.addEventListener("resize", init);
+        resizeHandler = () => {
+            if (destroyed) return;
+            init();
+        };
 
-        if (img.complete) init();
-        else img.addEventListener("load", init);
+        window.addEventListener("resize", resizeHandler);
 
-        const revealInterval = setInterval(() => {
+        if (img.complete && img.naturalWidth > 0) {
+            init();
+            loop();
+        } else {
+            img.addEventListener("load", () => {
+                if (destroyed) return;
+                init();
+                loop();
+            }, { once: true });
+        }
+
+        revealInterval = window.setInterval(() => {
             if (revealRow < rows) {
                 revealRow += 1;
             } else {
                 revealDone = true;
-                clearInterval(revealInterval);
+                window.clearInterval(revealInterval);
             }
         }, 15);
 
-        const interval = setInterval(() => {
-            if (!fall) symbolIndex++;
+        symbolInterval = window.setInterval(() => {
+            if (!fall && !destroyed) symbolIndex += 1;
         }, 200);
 
-        const fallTimer = setTimeout(() => {
+        fallTimer = window.setTimeout(() => {
             fall = true;
         }, 2500);
 
+        maxLifetimeTimer = window.setTimeout(() => {
+            if (!destroyed && !completed) {
+                completed = true;
+                onComplete?.();
+            }
+        }, 12000);
+
         return () => {
-            clearInterval(revealInterval);
-            clearInterval(interval);
-            clearTimeout(fallTimer);
-            window.removeEventListener("resize", init);
+            destroyed = true;
+
+            if (rafId) window.cancelAnimationFrame(rafId);
+            window.clearInterval(revealInterval);
+            window.clearInterval(symbolInterval);
+            window.clearTimeout(fallTimer);
+            window.clearTimeout(maxLifetimeTimer);
+            window.removeEventListener("resize", resizeHandler);
+
+            completed = true;
         };
-    }, []);
+    }, [onComplete]);
 
     return (
         <section className="preloaderEnd">

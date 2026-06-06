@@ -1,5 +1,9 @@
 .preloader__content{
     position: relative;
+    position: fixed;
+    z-index: 9999;
+    background-color: var(--color-ink);
+    inset: 0;
     height: 100svh;
     width:100%;
 }
@@ -34,12 +38,13 @@
 }
 
 .spotlight {
-  position: fixed;
-  width: 100%;
-  height: 100svh;
-  background-color: #000;
-  perspective: 1000px;
-  overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100svh;
+    z-index: 9998;
+    background-color: var(--color-black);
+    perspective: 1000px;
+    overflow: hidden;
 }
 
 .tunnel {
@@ -63,7 +68,7 @@
 .item-overlay {
   position: absolute;
   inset: 0;
-  background: #000;
+  background:var(--color-black);
   opacity: var(--overlay, 1);
   pointer-events: none;
 }
@@ -95,10 +100,13 @@
 
 
 .preloaderEnd{
-  position: relative;
-  width: 100%;
-  height: 100svh;
-  /* background-color: #0f0f0f; */
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    background-color: var(--color-paper);
 }
 
 .preloaderEnd__canvas{
