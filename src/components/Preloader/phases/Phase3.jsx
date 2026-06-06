@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 export default function PreloaderFaza2() {
     const canvasRef = useRef(null);
@@ -181,6 +182,13 @@ export default function PreloaderFaza2() {
         const fallTimer = setTimeout(() => {
             fall = true;
         }, 2500);
+
+        gsap.to(document.body,{
+            backgroundColor: "rgb(245,245,240)",
+            duration: 2,
+            ease: "power2.out",
+        });
+
 
         return () => {
             clearInterval(revealInterval);
