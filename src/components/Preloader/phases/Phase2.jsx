@@ -30,7 +30,8 @@ useEffect(() => {
         ease: "power3.in",
     });
 
-    gsap.set(container,{backgroundColor: "rgb(0,0,0)"})
+    // gsap.set(container,{backgroundColor: "rgb(0,0,0)"});
+    // gsap.set(document.body,{backgroundColor: "rgb(0,0,0)"});
     gsap.to(container, {
         backgroundColor: "rgb(245,245,240)",
         duration: 6.5,
