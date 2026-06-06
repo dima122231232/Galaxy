@@ -73,7 +73,7 @@ export default function PreloaderLayout({ onComplete }) {
     }
 
     function getMaxByPhase() {
-        if (phaseIndex === 0) return 0.1;
+        if (phaseIndex === 0) return 0.05;
         if (phaseIndex === 1) return 0.7;
         if (phaseIndex === 2) return 1;
         return 1;
