@@ -10,7 +10,7 @@ useEffect(() => {
     if (!container) return;
 
     const TOTAL_IMAGES = 12;
-    const GAP = 1200;
+    const GAP = 1500;
 
     const groups = Math.ceil(TOTAL_IMAGES / 4);
     const layersCount = Math.max(groups, 6);
@@ -30,9 +30,9 @@ useEffect(() => {
         ease: "power3.in",
     });
 
-    // gsap.set(container,{backgroundColor: "rgb(0,0,0)"});
+    gsap.set(container,{backgroundColor: "rgb(0,0,0)"});
     // gsap.set(document.body,{backgroundColor: "rgb(0,0,0)"});
-    gsap.to(document.body, {
+    gsap.to(container, {
         backgroundColor: "rgb(245,245,240)",
         duration: 6.5,
         delay: 6,
