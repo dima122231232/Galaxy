@@ -1,3 +1,5 @@
+.click-to-start{font-size:12px;font-family:var(--type-1);font-weight: 700;color: var(--color-click);}
+.clickDiv{z-index: 10000;;position: absolute;opacity: 0; pointer-events: none;}
 .preloader__content{
     position: relative;
     position: fixed;
@@ -25,8 +27,11 @@
 }
 .galaxy{display: none;}
 .galaxy-bg{position: absolute;top:0;width: 100%;height: 100%;mix-blend-mode: lighten;opacity: .3;filter: blur(25);object-fit: cover;}
+@media (min-width: 1000px) {.clickDiv{left:1rem;bottom:1rem;}}
 @media (max-width: 1000px) {
     .preloader__container-img canvas ,.canvas__phase2 {width:200%;}
+    .click-to-start{font-size:8px;}
+    .clickDiv{right:1rem;top:1rem;}
 }
 
 
@@ -138,7 +143,7 @@
 .progress__fill{position: absolute;width: 100%;height: 2px;background-color: var(--color-paper);opacity: .2;mix-blend-mode: difference;}
 .progress__track{position: absolute;width: 100%;height: 2px;background-color: var(--color-loading);transform: scaleX(0);transform-origin: 0% 0%;will-change: trasform;}
 @media (max-width: 1000px) {
-    .progress__label{font-size:.75rem;}
+    .progress__label,.label-reboot{font-size:.75rem;}
     .progress{padding: 1rem;bottom: 2.2rem;}
     .progress__bar{margin-top:10px;}
 }

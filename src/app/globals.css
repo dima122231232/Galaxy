@@ -8,6 +8,7 @@
     --color-ink: #111;
     --color-paper: #f4f4f2;
     --color-loading: #305EFF;
+    --color-click:#EAB308;
 }
 
 *{margin: 0;padding: 0;box-sizing: border-box;}

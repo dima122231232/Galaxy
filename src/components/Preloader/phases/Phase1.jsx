@@ -7,6 +7,7 @@ export default function Phase1({ nextPhase }) {
     const imgRef = useRef(null);
     const canvasRef = useRef(null);
     const hasRunRef = useRef(false);
+    const clickRef = useRef(null);
 
     useEffect(() => {
         const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
@@ -243,6 +244,8 @@ export default function Phase1({ nextPhase }) {
 
         const onClick = () => {
             if (hasRunRef.current) return;
+            gsap.to(clickRef.current,{opacity:0})
+            gsap.to(clickRef.current,{display:"none",delay:.2})
             hasRunRef.current = true;
             startRotation(15, 16);
             showNV();
@@ -260,6 +263,7 @@ export default function Phase1({ nextPhase }) {
             ease: "power1.out",
             onComplete: startRotation(8, 12),
         });
+        gsap.to(clickRef.current,{opacity:.1,delay:.2})
 
         if (img.complete && img.naturalWidth) {
             render();
@@ -283,6 +287,9 @@ export default function Phase1({ nextPhase }) {
                     alt="galaxy"
                 />
                 <canvas ref={canvasRef} />
+            </div>
+            <div className="clickDiv" ref={clickRef}>
+                <p className="click-to-start">CLICK TO START...</p>
             </div>
         </section>
     );

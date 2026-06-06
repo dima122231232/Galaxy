@@ -54,7 +54,6 @@ export default function PreloaderLayout({ onComplete }) {
                 ease: "power1.out"
             });
 
-            // 👉 если дошли до 100% — скрываем progress
             if (progressValue.current === 1 && progressContainerRef.current) {
                 gsap.to(progressContainerRef.current, {
                     opacity: 0,
