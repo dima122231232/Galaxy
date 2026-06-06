@@ -16,9 +16,9 @@ export default function Home() {
         const ASPECT_HEIGHT = 5;
         const ASCII_COLUMNS = 25;
         const IMAGE_STAGGER_MS = 100;
-        const CELL_APPEAR_MS = 1;
+        const CELL_APPEAR_MS = 2;
         const SCRAMBLE_COUNT = 10;
-        const SCRAMBLE_SPEED_MS = 50;
+        const SCRAMBLE_SPEED_MS = 100;
         const REVEAL_DELAY_MS = 0;
 
         const Color_Ink = "#111";

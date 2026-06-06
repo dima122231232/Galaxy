@@ -79,6 +79,7 @@
     height: auto;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: none;
+    padding:1rem;
   }
 
   .img:nth-child(n) {
