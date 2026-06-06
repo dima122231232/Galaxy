@@ -67,3 +67,7 @@
   opacity: var(--overlay, 1);
   pointer-events: none;
 }
+.layer, .item {
+  will-change: transform;
+  transform-style: preserve-3d;
+}
