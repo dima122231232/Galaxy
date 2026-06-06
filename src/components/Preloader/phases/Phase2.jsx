@@ -141,7 +141,7 @@ useEffect(() => {
     };
 
     gsap.ticker.add(update);
-    gsap.FromTo(document.body,{backgroundColor: "rgb(0,0,0)"},{
+    gsap.fromTo(document.body,{backgroundColor: "rgb(0,0,0)"},{
         backgroundColor: "rgb(245,245,240)",
         duration: 1.5,
         delay:9,
