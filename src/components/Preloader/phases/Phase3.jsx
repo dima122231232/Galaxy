@@ -6,7 +6,7 @@ export default function PreloaderPhase3({ onComplete }) {
     const imgRef = useRef(null);
 
     useEffect(() => {
-        let CELL_SIZE = 12;
+        let CELL_SIZE = 15;
 
         const CHAR_COLOR = "#111";
         const ASCII_CHARS = "@AVISUALANIMAL";
@@ -36,7 +36,7 @@ export default function PreloaderPhase3({ onComplete }) {
         let resizeHandler = null;
 
         function setupCanvas() {
-            CELL_SIZE = window.innerWidth < 768 ? 3 : 15;
+            CELL_SIZE = window.innerWidth < 768 ? 3 : CELL_SIZE;
 
             cols = Math.floor(window.innerWidth / CELL_SIZE);
             rows = Math.floor(window.innerHeight / CELL_SIZE);
