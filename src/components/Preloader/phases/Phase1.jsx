@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 export default function Phase1({ nextPhase }) {
     const imgRef = useRef(null);
     const canvasRef = useRef(null);
+    const hasRunRef = useRef(false);
 
     useEffect(() => {
         const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
@@ -241,6 +242,8 @@ export default function Phase1({ nextPhase }) {
         }
 
         const onClick = () => {
+            if (hasRunRef.current) return;
+            hasRunRef.current = true;
             startRotation(15, 16);
             showNV();
         };

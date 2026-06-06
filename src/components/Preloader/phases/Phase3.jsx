@@ -6,7 +6,7 @@ export default function PreloaderPhase3({ onComplete }) {
     const imgRef = useRef(null);
 
     useEffect(() => {
-        let CELL_SIZE = 15;
+        let CELL_SIZE = 12;
 
         const CHAR_COLOR = "#111";
         const ASCII_CHARS = "@AVISUALANIMAL";
