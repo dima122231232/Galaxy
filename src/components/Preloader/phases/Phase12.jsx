@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 export default function Phase1({ nextPhase }) {
@@ -11,12 +11,15 @@ export default function Phase1({ nextPhase }) {
         const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
         const FONT_SIZE = 12;
 
-        
         const ASPECT_WIDTH = 2;
         const ASPECT_HEIGHT = 1;
 
-
         const REVEAL_DURATION = 2.2;
+
+        let rafId = null;
+        let isDestroyed = false;
+
+        let rotationTween = null;
 
         let state = {
             angle: 0,
@@ -25,9 +28,9 @@ export default function Phase1({ nextPhase }) {
             bangOpacity: 0,
             vOpacity: 0,
             nOpacity: 0,
-            comOpacity: .1,
-            dot2Opacity:.5,
-            sixOpacity:.8
+            comOpacity: 0.1,
+            dot2Opacity: 0.5,
+            sixOpacity: 0.8
         };
 
         const img = imgRef.current;
@@ -40,19 +43,11 @@ export default function Phase1({ nextPhase }) {
         const charWidth = Math.ceil(measureCtx.measureText("M").width);
         const charHeight = FONT_SIZE;
 
-        let ASCII_COLUMNS = 100;
-        // const ASCII_COLUMNS = Math.floor(window.innerWidth / charWidth);
+        let ASCII_COLUMNS = 300;
 
         const ASCII_ROWS = Math.floor(
             ASCII_COLUMNS * (ASPECT_HEIGHT / ASPECT_WIDTH)
         );
-
-        // const updateColumns = () => {
-        //     ASCII_COLUMNS = window.innerWidth < 1000 ? 220 : 220;
-        // };
-        // updateColumns();
-
-        // window.addEventListener("resize", updateColumns);
 
         const offscreen = document.createElement("canvas");
         const offCtx = offscreen.getContext("2d", {
@@ -167,40 +162,50 @@ export default function Phase1({ nextPhase }) {
         }
 
         function loop() {
+            if (isDestroyed) return;
             render();
-            requestAnimationFrame(loop);
+            rafId = requestAnimationFrame(loop);
         }
 
-        loop();
-
-        state.reveal = 0;
-
-        gsap.to(state, {
-            reveal: 1,
-            duration: REVEAL_DURATION,
-            ease: "power1.out",
-            onComplete: startRotation(8 , 12),
-        });
-
-        function startRotation(speed , time) {
-            gsap.to(state, {
-                angle:speed,
+        function startRotation(speed, time) {
+            rotationTween?.kill();
+            rotationTween = gsap.to(state, {
+                angle: speed,
                 duration: time,
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut",
             });
         }
+
+        function destroy() {
+            isDestroyed = true;
+
+            if (rafId) cancelAnimationFrame(rafId);
+
+            rotationTween?.kill();
+
+            gsap.killTweensOf(state);
+
+            window.removeEventListener("click", onClick);
+
+            const c = canvas?.getContext("2d");
+            c?.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
         function showNV() {
             const tl = gsap.timeline({
-                onComplete:nextPhase
+                onComplete: () => {
+                    destroy();
+                    nextPhase();
+                }
             });
 
             tl.to(state, {
                 bangOpacity: .25,
                 sixOpacity: 1,
                 comOpacity: .5,
-                delay:.5,
+                delay: .5,
                 dot2Opacity: .8,
                 duration: 2,
                 ease: "none"
@@ -226,7 +231,7 @@ export default function Phase1({ nextPhase }) {
                 duration: .32,
                 delay: 1,
                 ease: "none",
-                onComplete: startRotation(100 , 16)
+                onComplete:startRotation(100, 16)
             })
             .to(document.body, {
                 backgroundColor: "#000",
@@ -234,30 +239,37 @@ export default function Phase1({ nextPhase }) {
                 ease: "none",
             }, "<");
         }
-                
+
         const onClick = () => {
-            // state.bangOpacity = 0;
-            // state.vOpacity = 0;
-            // state.nOpacity = 0;
-            startRotation(15 , 16);
-            showNV();   
+            startRotation(15, 16);
+            showNV();
         };
 
         window.addEventListener("click", onClick);
+
+        loop();
+
+        state.reveal = 0;
+
+        gsap.to(state, {
+            reveal: 1,
+            duration: REVEAL_DURATION,
+            ease: "power1.out",
+            onComplete: startRotation(8, 12),
+        });
 
         if (img.complete && img.naturalWidth) {
             render();
         } else {
             img.addEventListener("load", render);
         }
-        return () => {
-            window.removeEventListener("click", onClick);
-            // img.removeEventListener("load", render);
-        };
-        
-    }, []);
 
-    
+        return () => {
+            destroy();
+        };
+
+    }, [nextPhase]);
+
     return (
         <div className="preloader__content">
             <div className="preloader__container-img">
