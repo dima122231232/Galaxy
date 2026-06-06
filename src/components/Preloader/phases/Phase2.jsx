@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
-export default function Phase2() {
+export default function Phase2({ nextPhase }) {
     const containerRef = useRef(null);
 
 useEffect(() => {
@@ -23,7 +23,17 @@ useEffect(() => {
 
     const progress = { value: 0 };
 
-    gsap.to(progress, {
+    let destroyed = false;
+
+    const tl = gsap.timeline({
+        onComplete: () => {
+            if (!destroyed) {
+                nextPhase();
+            }
+        }
+    });
+
+    tl.to(progress, {
         value: 10,
         delay: 1.5,
         duration: 10,
@@ -32,10 +42,10 @@ useEffect(() => {
 
     gsap.set(container,{backgroundColor: "rgb(0,0,0)"});
     // gsap.set(document.body,{backgroundColor: "rgb(0,0,0)"});
-    gsap.to(container, {
+    gsap.to([container, document.body], {
         backgroundColor: "rgb(245,245,240)",
         duration: 6.5,
-        delay: 6,
+        delay: 5,
         ease: "power2.out",
     });
 
@@ -81,7 +91,7 @@ useEffect(() => {
             gsap.to(item, {
                 opacity: 0,
                 duration: 6.5,
-                delay: 6,
+                delay: 5,
                 ease: "power2.out",
             });
         }
@@ -132,8 +142,18 @@ useEffect(() => {
     gsap.ticker.add(update);
 
     return () => {
+        destroyed = true;
+
         gsap.ticker.remove(update);
-        root.remove(); // ← главное исправление
+
+        tl.kill();
+
+        gsap.killTweensOf(progress);
+        gsap.killTweensOf(container);
+
+        root.remove();
+
+        container.innerHTML = "";
     };
 }, []);
 

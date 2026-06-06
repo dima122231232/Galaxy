@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 export default function Phase1({ nextPhase }) {
@@ -8,15 +8,18 @@ export default function Phase1({ nextPhase }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        const ASCII_CHARS = "....N..V..V!!!,,,:::=+xX#0369@@";
+        const ASCII_CHARS = "....N..V..V!!!!,,,::=+xX#0369@@";
         const FONT_SIZE = 12;
 
-        
         const ASPECT_WIDTH = 2;
         const ASPECT_HEIGHT = 1;
 
-
         const REVEAL_DURATION = 2.2;
+
+        let rafId = null;
+        let isDestroyed = false;
+
+        let rotationTween = null;
 
         let state = {
             angle: 0,
@@ -25,9 +28,9 @@ export default function Phase1({ nextPhase }) {
             bangOpacity: 0,
             vOpacity: 0,
             nOpacity: 0,
-            comOpacity: .1,
-            dot2Opacity:.5,
-            sixOpacity:.8
+            comOpacity: 0.1,
+            dot2Opacity: 0.5,
+            sixOpacity: 0.8
         };
 
         const img = imgRef.current;
@@ -40,7 +43,8 @@ export default function Phase1({ nextPhase }) {
         const charWidth = Math.ceil(measureCtx.measureText("M").width);
         const charHeight = FONT_SIZE;
 
-        const ASCII_COLUMNS = Math.floor(window.innerWidth / charWidth);
+        let ASCII_COLUMNS = 300;
+
         const ASCII_ROWS = Math.floor(
             ASCII_COLUMNS * (ASPECT_HEIGHT / ASPECT_WIDTH)
         );
@@ -158,9 +162,90 @@ export default function Phase1({ nextPhase }) {
         }
 
         function loop() {
+            if (isDestroyed) return;
             render();
-            requestAnimationFrame(loop);
+            rafId = requestAnimationFrame(loop);
         }
+
+        function startRotation(speed, time) {
+            rotationTween?.kill();
+            rotationTween = gsap.to(state, {
+                angle: speed,
+                duration: time,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+            });
+        }
+
+        function destroy() {
+            isDestroyed = true;
+
+            if (rafId) cancelAnimationFrame(rafId);
+
+            rotationTween?.kill();
+
+            gsap.killTweensOf(state);
+
+            window.removeEventListener("click", onClick);
+
+            const c = canvas?.getContext("2d");
+            c?.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function showNV() {
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    destroy();
+                    nextPhase();
+                }
+            });
+
+            tl.to(state, {
+                bangOpacity: .25,
+                sixOpacity: 1,
+                comOpacity: .5,
+                delay: .5,
+                dot2Opacity: .8,
+                duration: 2,
+                ease: "none"
+            })
+            .to(state, {
+                bangOpacity: .4,
+                vOpacity: .25,
+                comOpacity: .8,
+                dot2Opacity: 1,
+                duration: 2,
+                ease: "none",
+            })
+            .to(state, {
+                bangOpacity: .7,
+                vOpacity: .4,
+                nOpacity: .15,
+                comOpacity: 1,
+                duration: 2,
+                ease: "none"
+            })
+            .to(state, {
+                reveal: 0,
+                duration: .32,
+                delay: 1,
+                ease: "none",
+                onComplete:startRotation(100, 16)
+            })
+            .to(document.body, {
+                backgroundColor: "#000",
+                duration: 0.32,
+                ease: "none",
+            }, "<");
+        }
+
+        const onClick = () => {
+            startRotation(15, 16);
+            showNV();
+        };
+
+        window.addEventListener("click", onClick);
 
         loop();
 
@@ -170,76 +255,21 @@ export default function Phase1({ nextPhase }) {
             reveal: 1,
             duration: REVEAL_DURATION,
             ease: "power1.out",
-            onComplete: startRotation(8 , 12),
+            onComplete: startRotation(8, 12),
         });
-
-        function startRotation(speed , time) {
-            gsap.to(state, {
-                angle:speed,
-                duration: time,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut",
-            });
-        }
-        function showNV() {
-            const tl = gsap.timeline({
-                onComplete:nextPhase
-            });
-
-            tl.to(state, {
-                bangOpacity: 1,
-                sixOpacity: 1,
-                comOpacity: .5,
-                delay:.5,
-                dot2Opacity: .8,
-                duration: 2,
-                ease: "none"
-            })
-            .to(state, {
-                vOpacity: .5,
-                comOpacity: .8,
-                dot2Opacity: 1,
-                duration: 2,
-                ease: "none",
-            })
-            .to(state, {
-                nOpacity: .2,
-                comOpacity: 1,
-                duration: 2,
-                ease: "none"
-            })
-            .to(state, {
-                reveal: 0,
-                duration: .55,
-                delay: 1,
-                ease: "none",
-                onComplete: startRotation(100 , 16)
-            });
-        }
-                
-        const onClick = () => {
-            // state.bangOpacity = 0;
-            // state.vOpacity = 0;
-            // state.nOpacity = 0;
-            startRotation(15 , 16);
-            showNV();   
-        };
-
-        window.addEventListener("click", onClick);
 
         if (img.complete && img.naturalWidth) {
             render();
         } else {
             img.addEventListener("load", render);
         }
-        return () => {
-            window.removeEventListener("click", onClick);
-            // img.removeEventListener("load", render);
-        };
-    }, []);
 
-    
+        return () => {
+            destroy();
+        };
+
+    }, [nextPhase]);
+
     return (
         <div className="preloader__content">
             <div className="preloader__container-img">

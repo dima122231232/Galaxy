@@ -4,12 +4,11 @@ import { gsap } from "gsap";
 
 
 export default function PreloaderFaza2() {
-    const canvas2Ref = useRef(null);
+    const canvasRef = useRef(null);
     useEffect(() => {
-        console.log(12);
         
     }, []);
     return (
-        <canvas ref={canvas2Ref} />
+        <div className="a2" ref={canvasRef} />
     );
 }
