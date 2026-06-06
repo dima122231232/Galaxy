@@ -13,7 +13,7 @@ useEffect(() => {
     const GAP = 1500;
 
     const groups = Math.ceil(TOTAL_IMAGES / 4);
-    const layersCount = Math.max(groups, 3);
+    const layersCount = Math.max(groups, 4);
 
     const root = document.createElement("div");
     root.className = "tunnel";
