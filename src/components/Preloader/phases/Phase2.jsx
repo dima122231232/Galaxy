@@ -40,6 +40,7 @@ useEffect(() => {
         ease: "power3.in",
     });
 
+    
     gsap.set(container,{backgroundColor: "rgb(0,0,0)"});
     // gsap.set(document.body,{backgroundColor: "rgb(0,0,0)"});
     gsap.to([container, document.body], {
@@ -159,3 +160,4 @@ useEffect(() => {
 
     return <div ref={containerRef} className="spotlight" />;
 }
+

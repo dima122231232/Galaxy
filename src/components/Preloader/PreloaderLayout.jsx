@@ -25,6 +25,8 @@ export default function PreloaderLayout() {
                 key={phaseIndex}
                 nextPhase={nextPhase}
             />
+
+            {/* <Phase3 nextPhase={nextPhase} /> */}
         </div>
     );
 }
