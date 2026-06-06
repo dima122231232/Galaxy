@@ -11,7 +11,7 @@ const phases = [Phase1, Phase2, Phase3];
 
 export default function PreloaderLayout({ onComplete }) {
     const progressRef = useRef(null);
-    const progressContainerRef = useRef(null); // 👈 добавили
+    const progressContainerRef = useRef(null);
     const progressValue = useRef(0);
     const fakeLoader = useRef(null);
 
@@ -24,6 +24,7 @@ export default function PreloaderLayout({ onComplete }) {
     const CurrentPhase = phases[phaseIndex];
 
     useEffect(() => {
+        gsap.to(".progress",{opacity:1,duration:.5 , delay:.2})
         if (!progressRef.current) return;
 
         gsap.set(progressRef.current, {

@@ -131,9 +131,14 @@
   visibility: hidden;
 }
 
-.progress{background-color: var(--color-ink);padding:1.5rem;z-index: 1000; position: fixed;left:50%;transform: translateX(-50%);bottom: 4rem;pointer-events: none;}
+.progress{background-color: var(--color-ink);padding:1.5rem;z-index: 1000; position: fixed;left:50%;transform: translateX(-50%);bottom: 4rem;pointer-events: none;opacity: 0;}
 .progress__label{font-family: var(--type-1);color: var(--color-paper);font-weight: 700;font-style: italic;opacity: .85;mix-blend-mode: difference;}
 .label-reboot{font-family: var(--type-2);font-weight: 400;font-style:normal;font-size:1rem;}
 .progress__bar{width: 100%;margin-top:15px;position: relative;}
 .progress__fill{position: absolute;width: 100%;height: 2px;background-color: var(--color-paper);opacity: .2;mix-blend-mode: difference;}
 .progress__track{position: absolute;width: 100%;height: 2px;background-color: var(--color-loading);transform: scaleX(0);transform-origin: 0% 0%;will-change: trasform;}
+@media (max-width: 1000px) {
+    .progress__label{font-size:.75rem;}
+    .progress{padding: 1rem;bottom: 2.2rem;}
+    .progress__bar{margin-top:10px;}
+}
